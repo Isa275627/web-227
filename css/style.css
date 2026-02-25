@@ -63,9 +63,17 @@ body {
 }
 
 @keyframes slideBounce {
-    0% { right: -260px; }
-    80% { right: 10px; }
-    100% { right: 0; }
+    0% {
+        right: -260px;
+    }
+
+    80% {
+        right: 10px;
+    }
+
+    100% {
+        right: 0;
+    }
 }
 
 main {
@@ -294,14 +302,16 @@ h2 {
 .overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-
+    background: rgba(0, 0, 0, 0.5);
     opacity: 0;
     visibility: hidden;
-    transition: 0.3s ease;
-    z-index: 500;
+    transition: opacity 0.3s ease;
+    z-index: 998;
+}
+
+.overlay.show {
+    opacity: 1;
+    visibility: visible;
 }
 
 .overlay.show {
@@ -328,11 +338,25 @@ h2 {
     transform: translateX(0);
 }
 
-.nav-links.show button:nth-child(1) { transition-delay: 0.1s; }
-.nav-links.show button:nth-child(2) { transition-delay: 0.2s; }
-.nav-links.show button:nth-child(3) { transition-delay: 0.3s; }
-.nav-links.show button:nth-child(4) { transition-delay: 0.4s; }
-.nav-links.show button:nth-child(5) { transition-delay: 0.5s; }
+.nav-links.show button:nth-child(1) {
+    transition-delay: 0.1s;
+}
+
+.nav-links.show button:nth-child(2) {
+    transition-delay: 0.2s;
+}
+
+.nav-links.show button:nth-child(3) {
+    transition-delay: 0.3s;
+}
+
+.nav-links.show button:nth-child(4) {
+    transition-delay: 0.4s;
+}
+
+.nav-links.show button:nth-child(5) {
+    transition-delay: 0.5s;
+}
 
 .nav-links button:hover {
     background: rgba(255, 255, 255, 0.25);

@@ -2,40 +2,39 @@ const hamburger = document.getElementById("hamburger");
 const navLinks = document.getElementById("navLinks");
 const overlay = document.getElementById("overlay");
 
+let menuOpen = false;
 
-hamburger.onclick = () => {
+function toggleMenu() {
+    if (menuOpen) return;
+    menuOpen = true;
+
     navLinks.classList.toggle("show");
     hamburger.classList.toggle("active");
     overlay.classList.toggle("show");
-};
 
-const pages = document.querySelectorAll(".page");
-
-function showSection(id) {
-    pages.forEach(p => p.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
+    setTimeout(() => {
+        menuOpen = false;
+    }, 350);
 }
 
-navLinks.querySelectorAll("button").forEach(btn => {
-    btn.onclick = () => {
-
-        navLinks.querySelectorAll("button").forEach(b => b.classList.remove("active"));
-
-        btn.classList.add("active");
-
-        showSection(btn.dataset.section);
-
-        navLinks.classList.remove("show");
-        hamburger.classList.remove("active");
-        overlay.classList.remove("show");
-    };
+hamburger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleMenu();
 });
 
-overlay.onclick = () => {
+overlay.addEventListener("click", () => {
     navLinks.classList.remove("show");
     hamburger.classList.remove("active");
     overlay.classList.remove("show");
-};
+});
+
+navLinks.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => {
+        navLinks.classList.remove("show");
+        hamburger.classList.remove("active");
+        overlay.classList.remove("show");
+    });
+});
 
 let count = 0;
 const counterValue = document.getElementById("counterValue");
