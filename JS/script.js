@@ -1,44 +1,23 @@
 const hamburger = document.getElementById("hamburger");
 const navLinks = document.getElementById("navLinks");
-const overlay = document.getElementById("overlay");
+const pages = document.querySelectorAll(".page");
 
-let menuOpen = false;
-
-function openMenu() {
-    navLinks.classList.add("show");
-    hamburger.classList.add("active");
-    overlay.classList.add("show");
-    menuOpen = true;
+function showSection(id) {
+    pages.forEach(p => p.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
 }
 
-function closeMenu() {
-    navLinks.classList.remove("show");
-    hamburger.classList.remove("active");
-    overlay.classList.remove("show");
-    menuOpen = false;
-}
-
-hamburger.addEventListener("click", (e) => {
-    e.stopPropagation(); 
-    if (menuOpen) {
-        closeMenu();
-    } else {
-        openMenu();
-    }
-});
-
-overlay.addEventListener("click", closeMenu);
+hamburger.onclick = () => {
+    navLinks.classList.toggle("show");
+    hamburger.classList.toggle("active");
+};
 
 navLinks.querySelectorAll("button").forEach(btn => {
-    btn.addEventListener("click", () => {
-        closeMenu();
-    });
-});
-
-document.addEventListener("click", (e) => {
-    if (menuOpen && !navLinks.contains(e.target) && !hamburger.contains(e.target)) {
-        closeMenu();
-    }
+    btn.onclick = () => {
+        showSection(btn.dataset.section);
+        navLinks.classList.remove("show");
+        hamburger.classList.remove("active");
+    };
 });
 
 let count = 0;
@@ -468,4 +447,4 @@ document.getElementById("retryTest").onclick = () => {
     clearInterval(timerInterval);
 
     timerEl.textContent = "20:00";
-};
+}; 
