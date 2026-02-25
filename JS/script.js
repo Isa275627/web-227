@@ -4,36 +4,41 @@ const overlay = document.getElementById("overlay");
 
 let menuOpen = false;
 
-function toggleMenu() {
-    if (menuOpen) return;
+function openMenu() {
+    navLinks.classList.add("show");
+    hamburger.classList.add("active");
+    overlay.classList.add("show");
     menuOpen = true;
-
-    navLinks.classList.toggle("show");
-    hamburger.classList.toggle("active");
-    overlay.classList.toggle("show");
-
-    setTimeout(() => {
-        menuOpen = false;
-    }, 350);
 }
 
-hamburger.addEventListener("click", (e) => {
-    e.stopPropagation();
-    toggleMenu();
-});
-
-overlay.addEventListener("click", () => {
+function closeMenu() {
     navLinks.classList.remove("show");
     hamburger.classList.remove("active");
     overlay.classList.remove("show");
+    menuOpen = false;
+}
+
+hamburger.addEventListener("click", (e) => {
+    e.stopPropagation(); 
+    if (menuOpen) {
+        closeMenu();
+    } else {
+        openMenu();
+    }
 });
+
+overlay.addEventListener("click", closeMenu);
 
 navLinks.querySelectorAll("button").forEach(btn => {
     btn.addEventListener("click", () => {
-        navLinks.classList.remove("show");
-        hamburger.classList.remove("active");
-        overlay.classList.remove("show");
+        closeMenu();
     });
+});
+
+document.addEventListener("click", (e) => {
+    if (menuOpen && !navLinks.contains(e.target) && !hamburger.contains(e.target)) {
+        closeMenu();
+    }
 });
 
 let count = 0;
