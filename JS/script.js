@@ -77,17 +77,31 @@ loadAudio(currentAudio);
 
 const pdfModal = document.getElementById("pdfModal");
 const pdfIframe = pdfModal.querySelector("iframe");
+const closePdf = document.getElementById("closePdf");
+
+function openPDF(url) {
+    pdfIframe.src = "";
+    setTimeout(() => {
+        pdfIframe.src = url;
+    }, 50);
+    pdfModal.classList.add("show");
+}
 
 document.querySelectorAll(".pdfBtn").forEach(btn => {
-    btn.onclick = () => {
-        pdfIframe.src = btn.dataset.pdf;
-        pdfModal.classList.add("show");
-    };
+    btn.onclick = () => openPDF(btn.dataset.pdf);
 });
 
-document.getElementById("closePdf").onclick = () => {
+closePdf.onclick = () => {
     pdfModal.classList.remove("show");
+    pdfIframe.src = "";
 };
+
+pdfModal.addEventListener("click", (e) => {
+    if (e.target === pdfModal) {
+        pdfModal.classList.remove("show");
+        pdfIframe.src = "";
+    }
+});
 
 const questions = [
     {
