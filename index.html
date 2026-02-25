@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISLAM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <header class="header">
+        <h1>ISLAM</h1>
+        <div class="hamburger" id="hamburger">
+            <span></span><span></span><span></span>
+        </div>
+    </header>
+    <nav class="nav-links" id="navLinks">
+        <button data-section="home">🏠 HOME</button>
+        <button data-section="audio">🎧 AUDIO</button>
+        <button data-section="story">📖 STORY</button>
+        <button data-section="test">📝 TEST</button>
+    </nav>
+    <div class="overlay" id="overlay"></div>
+    <main>
+        <section class="page active" id="home">
+            <h2>COUNTER</h2>
+            <div class="counter-display" id="counterValue">0</div>
+            <div class="counter-buttons">
+                <button id="colorBtn">COLOR</button>
+                <button id="countBtn">COUNT</button>
+                <button id="resetBtn">RESET</button>
+            </div>
+        </section>
+        <section class="page" id="audio">
+            <h2>AUDIO</h2>
+            <div class="audio-display" id="audioTitle">AUDIO: Al-Baqarah</div>
+            <div class="audio-controls">
+                <button id="prevAudio">⏮</button>
+                <button id="playPause">▶️</button>
+                <button id="nextAudio">⏭</button>
+            </div>
+
+            <div class="audio-progress-container">
+                <div class="audio-progress" id="audioProgress"></div>
+            </div>
+            <audio id="audioPlayer"></audio>
+        </section>
+        <section class="page" id="story">
+            <h2>STORY</h2>
+            <button class="pdfBtn" data-pdf="https://azan.ru/upload/Благородный%20Коран.pdf">
+                📘 Quran
+            </button>
+            <button class="pdfBtn" data-pdf="https://azan.kz/upload/Ibn_Khisham_Zhizneopisanie_proroka_Mukhammada.pdf">
+                📙 Seerah
+            </button>
+            <button class="pdfBtn" data-pdf="https://azan.kz/upload/101%20ХАДИС%20ИЗ%20«САХИХ АЛЬ-БУХАРИ».pdf">
+                📗 Hadiths
+            </button>
+        </section>
+        <section class="page" id="test">
+            <h2>TEST</h2>
+            <div class="timer-box">
+                ⏳ TIME: <span id="timer">20:00</span>
+            </div>
+            <button class="start-btn" id="startTest">START TEST</button>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="test-box hidden" id="testBox">
+                <p id="questionText"></p>
+                <div class="test-options" id="optionsBox"></div>
+                <div class="test-buttons">
+                    <button id="prevQuestion">⬅ BACK</button>
+                    <button id="nextQuestion">NEXT ➡</button>
+                    <button id="finishBtn">🏁 DONE</button>
+                </div>
+            </div>
+            <div class="finish-screen" id="finishScreen">
+                <h2>🎉 FINISH</h2>
+                <p id="finalScore"></p>
+                <button id="retryTest">🔄 RESTART</button>
+            </div>
+        </section>
+    </main>
+    <div class="pdf-modal" id="pdfModal">
+        <iframe src=""></iframe>
+        <div class="close-btn" id="closePdf">✖ CLOSE</div>
+    </div>
+    <script src="JS/script.js"></script>
+</body>
+
+</html>
