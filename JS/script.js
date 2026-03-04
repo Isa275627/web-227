@@ -1,464 +1,296 @@
-const hamburger = document.getElementById("hamburger");
-const navLinks = document.getElementById("navLinks");
-const pages = document.querySelectorAll(".page");
+(() => {
+    // --- NAVIGATION ---
+    const hamburger = document.getElementById("hamburger");
+    const navLinks = document.getElementById("navLinks");
+    const pages = document.querySelectorAll(".page");
 
-function showSection(id) {
-    pages.forEach(p => p.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-}
+    function showSection(id) {
+        pages.forEach(p => p.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+    }
 
-hamburger.onclick = () => {
-    navLinks.classList.toggle("show");
-    hamburger.classList.toggle("active");
-};
-
-navLinks.querySelectorAll("button").forEach(btn => {
-    btn.onclick = () => {
-        showSection(btn.dataset.section);
-        navLinks.classList.remove("show");
-        hamburger.classList.remove("active");
+    hamburger.onclick = () => {
+        navLinks.classList.toggle("show");
+        hamburger.classList.toggle("active");
     };
-});
 
-let count = 0;
-const counterValue = document.getElementById("counterValue");
+    navLinks.querySelectorAll("button").forEach(btn => {
+        btn.onclick = () => {
+            showSection(btn.dataset.section);
+            navLinks.classList.remove("show");
+            hamburger.classList.remove("active");
+        };
+    });
 
-document.getElementById("countBtn").onclick = () => {
-    count++;
-    counterValue.textContent = count;
-};
+    // --- COUNTER ---
+    let count = 0;
+    const counterValue = document.getElementById("counterValue");
+    const colors = ["#0d6efd", "#6610f2", "#198754", "#dc3545", "#000000"];
+    let colorIndex = 0;
 
-document.getElementById("resetBtn").onclick = () => {
-    count = 0;
-    counterValue.textContent = count;
-};
+    document.getElementById("countBtn").onclick = () => {
+        count++;
+        counterValue.textContent = count;
+    };
 
-const colors = ["#0d6efd", "#6610f2", "#198754", "#dc3545", "#000000"];
-let colorIndex = 0;
+    document.getElementById("resetBtn").onclick = () => {
+        count = 0;
+        counterValue.textContent = count;
+    };
 
-document.getElementById("colorBtn").onclick = () => {
-    counterValue.style.color = colors[colorIndex];
-    colorIndex = (colorIndex + 1) % colors.length;
-};
+    document.getElementById("colorBtn").onclick = () => {
+        counterValue.style.color = colors[colorIndex];
+        colorIndex = (colorIndex + 1) % colors.length;
+    };
 
-const audioPlayer = document.getElementById("audioPlayer");
-const playPause = document.getElementById("playPause");
-const audioTitle = document.getElementById("audioTitle");
-const audioProgress = document.getElementById("audioProgress");
+    // --- AUDIO ---
+    const audioPlayer = document.getElementById("audioPlayer");
+    const playPause = document.getElementById("playPause");
+    const audioTitle = document.getElementById("audioTitle");
+    const audioProgress = document.getElementById("audioProgress");
 
-const audioFiles = [
-    { src: "mp3/audio.mp3", title: "Al-Baqarah" },
-    { src: "mp3/Sura_Lukman.mp3", title: "Сура Лукман" }
-];
+    const audioFiles = [
+        { src: "mp3/audio.mp3", title: "Al-Baqarah" },
+        { src: "mp3/Sura_Lukman.mp3", title: "Сура Лукман" }
+    ];
 
-let currentAudio = 0;
+    let currentAudio = 0;
 
-function loadAudio(i) {
-    audioPlayer.src = audioFiles[i].src;
-    audioTitle.textContent = "AUDIO: " + audioFiles[i].title;
-}
+    function loadAudio(i) {
+        audioPlayer.src = audioFiles[i].src;
+        audioTitle.textContent = "AUDIO: " + audioFiles[i].title;
+    }
 
-playPause.onclick = () => {
-    if (audioPlayer.paused) {
+    playPause.onclick = () => {
+        if (audioPlayer.paused) {
+            audioPlayer.play();
+            playPause.textContent = "⏸";
+        } else {
+            audioPlayer.pause();
+            playPause.textContent = "▶️";
+        }
+    };
+
+    document.getElementById("prevAudio").onclick = () => {
+        currentAudio = (currentAudio - 1 + audioFiles.length) % audioFiles.length;
+        loadAudio(currentAudio);
         audioPlayer.play();
         playPause.textContent = "⏸";
-    } else {
-        audioPlayer.pause();
-        playPause.textContent = "▶️";
+    };
+
+    document.getElementById("nextAudio").onclick = () => {
+        currentAudio = (currentAudio + 1) % audioFiles.length;
+        loadAudio(currentAudio);
+        audioPlayer.play();
+        playPause.textContent = "⏸";
+    };
+
+    audioPlayer.ontimeupdate = () => {
+        if (!audioPlayer.duration) return;
+        const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+        audioProgress.style.width = percent + "%";
+    };
+
+    loadAudio(currentAudio);
+
+    // --- PDF MODAL ---
+    const pdfModal = document.getElementById("pdfModal");
+    const pdfIframe = pdfModal.querySelector("iframe");
+    const closePdf = document.getElementById("closePdf");
+
+    function openPDF(url) {
+        pdfIframe.src = "";
+        setTimeout(() => pdfIframe.src = url, 50);
+        pdfModal.classList.add("show");
     }
-};
 
-audioPlayer.ontimeupdate = () => {
-    let percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-    audioProgress.style.width = percent + "%";
-};
+    document.querySelectorAll(".pdfBtn").forEach(btn => {
+        btn.onclick = () => openPDF(btn.dataset.pdf);
+    });
 
-loadAudio(currentAudio);
-
-const pdfModal = document.getElementById("pdfModal");
-const pdfIframe = pdfModal.querySelector("iframe");
-const closePdf = document.getElementById("closePdf");
-
-function openPDF(url) {
-    pdfIframe.src = "";
-    setTimeout(() => {
-        pdfIframe.src = url;
-    }, 50);
-    pdfModal.classList.add("show");
-}
-
-document.querySelectorAll(".pdfBtn").forEach(btn => {
-    btn.onclick = () => openPDF(btn.dataset.pdf);
-});
-
-closePdf.onclick = () => {
-    pdfModal.classList.remove("show");
-    pdfIframe.src = "";
-};
-
-pdfModal.addEventListener("click", (e) => {
-    if (e.target === pdfModal) {
+    closePdf.onclick = () => {
         pdfModal.classList.remove("show");
         pdfIframe.src = "";
-    }
-});
+    };
 
-const questions = [
-    {
-        question: "Где родился Пророк ﷺ ?",
-        options: ["Медина", "Мекка", "Таиф", "Ясриб"],
-        correct: 1
-    },
-    {
-        question: "В каком возрасте он получил откровение?",
-        options: ["25", "30", "40", "50"],
-        correct: 2
-    },
-    {
-        question: "Какой ангел передал Пророку Мухаммаду ﷺ первое откровение?",
-        options: ["Микаил", "Джибрил", "Исрафил", "Азраил"],
-        correctAnswer: 1
-    },
-    {
-        question: "Как звали первого мужчину, принявшего ислам?",
-        options: ["Али ибн Абу Талиб", "Умар ибн аль-Хаттаб", "Абу Бакр ас-Сиддик", "Усман ибн Аффан"],
-        correctAnswer: 2
-    },
-    {
-        question: "Сколько лет длилось пророчество Пророка Мухаммада ﷺ ?",
-        options: ["20 лет", "23 года", "25 лет", "30 лет"],
-        correctAnswer: 1
-    },
-    {
-        question: "Кто была первой женой Пророка Мухаммада ﷺ ?",
-        options: ["Аиша бинт Абу Бакр", "Сауда бинт Зам’а", "Хадиджа бинт Хувайлид", "Фатима бинт Мухаммад"],
-        correctAnswer: 2
-    },
-    {
-        question: "Как называлась первая битва мусульман против курайшитов?",
-        options: ["Битва при Ухуде", "Битва при Табуке", "Битва при Бадре", "Битва при Хунейне"],
-        correctAnswer: 2
-    },
-    {
-        question: "В каком году произошел Хиджра — переселение мусульман из Мекки в Медину?",
-        options: ["610 г.", "615 г.", "622 г.", "630 г."],
-        correctAnswer: 2
-    },
-    {
-        question: "Кто стал первым халифом после смерти Пророка Мухаммада ﷺ ?",
-        options: ["Умар ибн аль-Хаттаб", "Абу Бакр ас-Сиддик", "Усман ибн Аффан", "Али ибн Абу Талиб"],
-        correctAnswer: 1
-    },
-    {
-        question: "Кто был известен как «Меч Аллаха» (Сайфуллах)?",
-        options: ["Халид ибн аль-Валид", "Умар ибн аль-Хаттаб", "Али ибн Абу Талиб", "Салман аль-Фариси"],
-        correctAnswer: 0
-    },
-    {
-        question: "Сколько лет Пророк Мухаммад ﷺ прожил в Мекке после начала откровений?",
-        options: ["10 лет", "13 лет", "15 лет", "20 лет"],
-        correctAnswer: 1
-    },
-    {
-        question: "Как звали лучшего друга и ближайшего сподвижника Пророка Мухаммада ﷺ ?",
-        options: ["Усман ибн Аффан", "Али ибн Абу Талиб", "Абу Бакр ас-Сиддик", "Саад ибн Абу Ваккас"],
-        correctAnswer: 2
-    },
-    {
-        question: "Кто был назначен главнокомандующим в битве при Муте?",
-        options: ["Зайд ибн Хариса", "Халид ибн аль-Валид", "Абдуррахман ибн Ауф", "Умар ибн аль-Хаттаб"],
-        correctAnswer: 0
-    },
-    {
-        question: "Какой сахаб был известен своей щедростью и богатством, использовав его для помощи исламу?",
-        options: ["Усман ибн Аффан", "Абдуллах ибн Масуд", "Убай ибн Кааб", "Абу Убайда ибн аль-Джаррах"],
-        correctAnswer: 0
-    },
-    {
-        question: "В каком возрасте умер Пророк Мухаммад ﷺ ?",
-        options: ["60 лет", "61 год", "63 года", "65 лет"],
-        correctAnswer: 2
-    },
-    {
-        question: "Какая битва стала поворотной для мусульман, несмотря на поражение?",
-        options: ["Битва при Бадре", "Битва при Ухуде", "Битва при Табуке", "Битва при Хандаке"],
-        correctAnswer: 1
-    },
-    {
-        question: "Как звали дядю Пророка Мухаммада ﷺ , который защищал его в Мекке?",
-        options: ["Абу Лахаб", "Абу Талиб", "Аббас ибн Абд аль-Мутталиб", "Хамза ибн Абд аль-Мутталиб"],
-        correctAnswer: 1
-    },
-    {
-        question: "Кто был первым ребёнком, принявшим ислам?",
-        options: ["Хасан ибн Али", "Хусейн ибн Али", "Али ибн Абу Талиб", "Зайд ибн Хариса"],
-        correctAnswer: 2
-    },
-    {
-        question: "Кто был известен как «переводчик Корана» (Таржуман аль-Коран)?",
-        options: ["Ибн Аббас", "Ибн Масуд", "Убай ибн Кааб", "Саад ибн Муад"],
-        correctAnswer: 0
-    },
-    {
-        question: "В каком году мусульмане вернулись в Мекку (Фатх Мекка)?",
-        options: ["6 год хиджры", "8 год хиджры", "10 год хиджры", "12 год хиджры"],
-        correctAnswer: 1
-    },
-    {
-        question: "Как звали няню Пророка Мухаммада ﷺ ?",
-        options: ["Умм Аиман", "Халима ас-Саадия", "Барка", "Умм Хабиба"],
-        correctAnswer: 1
-    },
-    {
-        question: "Кто был известен как «Амин аль-умма» (Хранитель уммы)?",
-        options: ["Абу Бакр ас-Сиддик", "Абу Убайда ибн аль-Джаррах", "Саад ибн Муад", "Хамза ибн Абд аль-Мутталиб"],
-        correctAnswer: 1
-    },
-    {
-        question: "Сколько сахабов участвовало в битве при Бадре?",
-        options: ["214", "313", "400", "1000"],
-        correctAnswer: 1
-    },
-    {
-        question: "Кто был известен своей красноречивой речью и умением распространять ислам?",
-        options: ["Абдуллах ибн Масуд", "Мусаб ибн Умайр", "Саад ибн Абу Ваккас", "Зайд ибн Хариса"],
-        correctAnswer: 1
-    },
-    {
-        question: "Какое событие произошло в году, известном как «Год печали» (Ам аль-Хузн)?",
-        options: ["Хиджра в Медину", "Смерть Абу Талиба и Хадиджи", "Битва при Табуке", "Фатх Мекка"],
-        correctAnswer: 1
-    },
-    {
-        question: "В каком году была Битва при Ухуде?",
-        options: ["1 год хиджры", "3 год хиджры", "5 год хиджры", "7 год хиджры"],
-        correctAnswer: 1
-    },
-    {
-        question: "Как звали мать Пророка Мухаммада ﷺ ?",
-        options: ["Амира бинт Абд аль-Уддар", "Амина бинт Уайхаб", "Халима бинт Саадия", "Умм Аиман"],
-        correctAnswer: 1
-    },
-    {
-        question: "Кто был первым рабом, принявшим ислам?",
-        options: ["Зайд ибн Хариса", "Билал ибн Рабах", "Сумая бинт Хайят", "Абу Фахм"],
-        correctAnswer: 1
-    },
-    {
-        question: "Как назывался первый мусульманский календарь?",
-        options: ["Хиджри", "Мекканский", "Лунный", "Суннитский"],
-        correctAnswer: 0
-    },
-    {
-        question: "Как называлась последняя битва, в которой участвовал Пророк Мухаммад ﷺ ?",
-        options: ["Битва при Бадре", "Битва при Ухуде", "Битва при Табуке", "Битва при Хунейне"],
-        correctAnswer: 2
-    },
-    {
-        question: "Кто был первым человеком, принявшим ислам среди женщин?",
-        options: ["Аиша бинт Абу Бакр", "Фатима бинт Мухаммад", "Хадиджа бинт Хувайлид", "Сауда бинт Зам"],
-        correctAnswer: 2
-    },
-    {
-        question: "Сколько раз Пророк Мухаммад ﷺ совершил хадж до переселения?",
-        options: ["Один", "Два", "Три", "Четыре"],
-        correctAnswer: 2
-    },
-    {
-        question: "Как называется священная мечеть, расположенная в Медине и построенная для молитв Пророка Мухаммада ﷺ?",
-        options: ["Мечеть аль-Харам", "Мечеть аль-Набави", "Мечеть аль-Акса", "Мечеть Кибла"],
-        correctAnswer: 1
-    },
-    {
-        question: "Кто из сподвижников Пророка Мухаммада ﷺ пал шахидом в битве при Ухуде?",
-        options: ["Абдуллах ибн Масуд", "Хамза ибн Абд аль-Мутталиб", "Али ибн Абу Талиб", "Умар ибн аль-Хаттаб"],
-        correctAnswer: 1
-    },
-    {
-        question: "В каком году родился Пророк Мухаммад ﷺ ?",
-        options: ["580 г.", "600 г.", "610 г.", "570 г."],
-        correctAnswer: 3
-    },
-    {
-        question: "Как называлась мечеть, в которой Пророк Мухаммад ﷺ совершил ночное путешествие и вознесение на небеса?",
-        options: ["Мечеть аль-Харам", "Мечеть аль-Набави", " Мечеть аль-Акса", "Мечеть Табук"],
-        correctAnswer: 2
-    },
-    {
-        question: "Какое событие произошло в 630 году?",
-        options: ["Битва при Ухуде", " Фатх Мекка (Открытие Мекки)", "Хиджра", "Битва при Бадре"],
-        correctAnswer: 1
-    },
-    {
-        question: "Какое событие произошло в Год слона (Ам аль-Фил)?",
-        options: ["Построение Мечети аль-Харам", "Рождение Пророка Мухаммада ﷺ", "Первое откровение Пророку", "Открытие Мекки"],
-        correctAnswer: 1
-    },
-    {
-        question: "Кто был главнокомандующим мусульманской армии в битве при Бадре?",
-        options: ["Пророк Мухаммад ﷺ", "Абу Бакр ас-Сиддик", "Халид ибн аль-Валид", "Али ибн Абу Талиб"],
-        correctAnswer: 0
-    },
-    {
-        question: "Какая из дочерей Пророка Мухаммада ﷺ считается одной из самых благородных фигур в исламе, являясь символом верности и терпения?",
-        options: ["Асия бинт Мухаммад", "Халима бинт Мухаммад", "Фатима бинт Мухаммад", "Зейнаб бинт Мухаммад"],
-        correctAnswer: 2
-    }
-];
-
-let currentQuestion = 0;
-let answers = [];
-let timeLeft = 20 * 60;
-let timerInterval;
-
-const startBtn = document.getElementById("startTest");
-const testBox = document.getElementById("testBox");
-const optionsBox = document.getElementById("optionsBox");
-const questionText = document.getElementById("questionText");
-const timerEl = document.getElementById("timer");
-
-const finishScreen = document.getElementById("finishScreen");
-const finalScore = document.getElementById("finalScore");
-
-function startTimer() {
-
-    clearInterval(timerInterval);
-
-    timeLeft = 20 * 60;
-
-    timerInterval = setInterval(() => {
-
-        let minutes = Math.floor(timeLeft / 60);
-        let seconds = timeLeft % 60;
-
-        timerEl.textContent =
-            `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-
-        timeLeft--;
-
-        if (timeLeft < 0) {
-            finishTest();
+    pdfModal.addEventListener("click", (e) => {
+        if (e.target === pdfModal) {
+            pdfModal.classList.remove("show");
+            pdfIframe.src = "";
         }
-
-    }, 1000);
-}
-
-
-function showQuestion() {
-    let q = questions[currentQuestion];
-    questionText.textContent = q.question;
-    optionsBox.innerHTML = "";
-
-    q.options.forEach((opt, i) => {
-        let div = document.createElement("div");
-        div.classList.add("option-btn");
-        div.textContent = opt;
-
-        if (answers[currentQuestion] === i) div.classList.add("selected");
-
-        div.onclick = () => {
-            answers[currentQuestion] = i;
-            document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
-            div.classList.add("selected");
-        };
-
-        optionsBox.appendChild(div);
     });
 
-    document.querySelector(".progress-fill").style.width =
-        ((currentQuestion + 1) / questions.length) * 100 + "%";
-}
+    // --- QUIZ TEST ---
+    const allQuestions = [
+        { question: "Где родился Пророк ﷺ ?", options: ["Медина","Мекка","Таиф","Ясриб"], correctAnswer: 1 },
+        { question: "В каком возрасте он получил откровение?", options: ["25","30","40","50"], correctAnswer: 2 },
+        { question: "Какой ангел передал Пророку Мухаммаду ﷺ первое откровение?", options: ["Микаил","Джибрил","Исрафил","Азраил"], correctAnswer: 1 },
+        { question: "Как звали первого мужчину, принявшего ислам?", options: ["Али ибн Абу Талиб","Умар ибн аль-Хаттаб","Абу Бакр ас-Сиддик","Усман ибн Аффан"], correctAnswer: 2 },
+        { question: "Сколько лет длилось пророчество Пророка Мухаммада ﷺ ?", options: ["20 лет","23 года","25 лет","30 лет"], correctAnswer: 1 },
+        { question: "Кто была первой женой Пророка Мухаммада ﷺ ?", options: ["Аиша бинт Абу Бакр","Сауда бинт Зам’а","Хадиджа бинт Хувайлид","Фатима бинт Мухаммад"], correctAnswer: 2 },
+        { question: "Как называлась первая битва мусульман против курайшитов?", options: ["Битва при Ухуде","Битва при Табуке","Битва при Бадре","Битва при Хунейне"], correctAnswer: 2 },
+        { question: "В каком году произошел Хиджра — переселение мусульман из Мекки в Медину?", options: ["610 г.","615 г.","622 г.","630 г."], correctAnswer: 2 },
+        { question: "Кто стал первым халифом после смерти Пророка Мухаммада ﷺ ?", options: ["Умар ибн аль-Хаттаб","Абу Бакр ас-Сиддик","Усман ибн Аффан","Али ибн Абу Талиб"], correctAnswer: 1 },
+        { question: "Кто был известен как «Меч Аллаха» (Сайфуллах)?", options: ["Халид ибн аль-Валид","Умар ибн аль-Хаттаб","Али ибн Абу Талиб","Салман аль-Фариси"], correctAnswer: 0 }
+    ];
 
-function finishTest() {
+    // --- Выбор уровня сложности ---
+    const startBtn = document.getElementById("startTest");
+    const testBox = document.getElementById("testBox");
+    const optionsBox = document.getElementById("optionsBox");
+    const questionText = document.getElementById("questionText");
+    const timerEl = document.getElementById("timer");
+    const finishScreen = document.getElementById("finishScreen");
+    const finalScore = document.getElementById("finalScore");
+    const testButtons = document.querySelector(".test-buttons");
+    const progressFill = document.querySelector(".progress-fill");
+    const retryBtn = document.getElementById("retryTest");
 
-    clearInterval(timerInterval);
+    let questions = [];
+    let currentQuestion = 0;
+    let answers = [];
+    let timeLeft = 20*60;
+    let timerInterval;
 
-    testBox.style.display = "none";
-
-    testButtons.style.display = "none";
-
-    finishScreen.style.display = "block";
-
-    let score = 0;
-    questions.forEach((q, i) => {
-        if (answers[i] === q.correctAnswer) score++;
-    });
-
-    resultText.textContent = `Вы ответили правильно на ${score} из ${questions.length}`;
-}
-
-const testButtons = document.querySelector(".test-buttons");
-
-startBtn.onclick = () => {
-
-    startBtn.style.display = "none";
-
-    testBox.style.display = "block";
-
-    testButtons.style.display = "flex";
-
-    finishScreen.style.display = "none";
-
-    currentQuestion = 0;
-    answers = [];
-
-    startTimer();
-    showQuestion();
-};
-
-retryTest.onclick = () => {
-
-    finishScreen.style.display = "none";
-
-    testButtons.style.display = "none";
-
-    startBtn.style.display = "block";
-
-    testBox.style.display = "block";
-
-    currentQuestion = 0;
-    answers = [];
-
-    progressFill.style.width = "0%";
-
-    clearInterval(timerInterval);
-    timerEl.textContent = "20:00";
-};
-
-
-document.getElementById("nextQuestion").onclick = () => {
-    if (currentQuestion < questions.length - 1) {
-        currentQuestion++;
-        showQuestion();
+    function startTimer() {
+        clearInterval(timerInterval);
+        timeLeft = 20*60;
+        timerInterval = setInterval(() => {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerEl.textContent = `${minutes}:${seconds < 10 ? "0":""}${seconds}`;
+            timeLeft--;
+            if(timeLeft < 0) finishTest();
+        }, 1000);
     }
-};
 
-document.getElementById("prevQuestion").onclick = () => {
-    if (currentQuestion > 0) {
-        currentQuestion--;
-        showQuestion();
+    function saveProgress() {
+        localStorage.setItem("quizProgress", JSON.stringify({
+            currentQuestion,
+            answers,
+            questions
+        }));
     }
-};
 
-document.getElementById("finishBtn").onclick = finishTest;
+    function loadProgress() {
+        const data = JSON.parse(localStorage.getItem("quizProgress"));
+        if(data){
+            currentQuestion = data.currentQuestion;
+            answers = data.answers;
+            questions = data.questions;
+            return true;
+        }
+        return false;
+    }
 
-document.getElementById("retryTest").onclick = () => {
+    function showQuestion() {
+        const q = questions[currentQuestion];
+        questionText.textContent = q.question;
+        optionsBox.innerHTML = "";
+        q.options.forEach((opt,i)=>{
+            const div = document.createElement("div");
+            div.classList.add("option-btn");
+            div.textContent = opt;
+            if(answers[currentQuestion] === i) div.classList.add("selected");
+            div.onclick = () => {
+                answers[currentQuestion] = i;
+                saveProgress();
 
-    finishScreen.style.display = "none";
+                // подсветка правильного ответа
+                optionsBox.querySelectorAll(".option-btn").forEach(b=>{
+                    b.classList.remove("selected");
+                    if(b.textContent === q.options[q.correctAnswer]){
+                        b.classList.add("correct");
+                    } else if(b.textContent === opt){
+                        b.classList.add("wrong");
+                    }
+                });
 
-    startBtn.style.display = "block";
+                setTimeout(()=>{
+                    if(currentQuestion < questions.length-1){
+                        currentQuestion++;
+                        showQuestion();
+                    } else {
+                        finishTest();
+                    }
+                }, 1000);
 
-    testBox.style.display = "block";
+                progressFill.style.width = ((currentQuestion+1)/questions.length)*100+"%";
+            };
+            optionsBox.appendChild(div);
+        });
+    }
 
-    currentQuestion = 0;
-    answers = [];
+    function finishTest() {
+        clearInterval(timerInterval);
+        testBox.style.display = "none";
+        testButtons.style.display = "none";
+        finishScreen.style.display = "block";
 
-    document.querySelector(".progress-fill").style.width = "0%";
+        // подсчет результатов
+        let score = 0;
+        questions.forEach((q,i)=>{ if(answers[i] === q.correctAnswer) score++; });
 
-    questionText.textContent = "";
-    optionsBox.innerHTML = "";
+        finalScore.innerHTML = `Вы ответили правильно на ${score} из ${questions.length}`;
 
-    clearInterval(timerInterval);
+        // добавить круговой прогресс
+        const canvas = document.createElement("canvas");
+        canvas.width = 150; canvas.height = 150;
+        finishScreen.appendChild(canvas);
+        const ctx = canvas.getContext("2d");
+        const percent = score/questions.length;
+        ctx.lineWidth = 12;
+        ctx.strokeStyle = "#ddd";
+        ctx.beginPath();
+        ctx.arc(75,75,60,0,2*Math.PI);
+        ctx.stroke();
+        ctx.strokeStyle = "#198754";
+        ctx.beginPath();
+        ctx.arc(75,75,60,-Math.PI/2, -Math.PI/2 + 2*Math.PI*percent);
+        ctx.stroke();
+        ctx.fillStyle = "#000";
+        ctx.font = "16px Roboto";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(Math.round(percent*100)+"%",75,75);
 
-    timerEl.textContent = "20:00";
-}; 
+        // удалить прогресс из localStorage
+        localStorage.removeItem("quizProgress");
+    }
+
+    function resetTest() {
+        finishScreen.style.display = "none";
+        testButtons.style.display = "none";
+        startBtn.style.display = "block";
+        testBox.style.display = "block";
+        currentQuestion = 0;
+        answers = [];
+        progressFill.style.width = "0%";
+        questionText.textContent = "";
+        optionsBox.innerHTML = "";
+        clearInterval(timerInterval);
+        timerEl.textContent = "20:00";
+        localStorage.removeItem("quizProgress");
+    }
+
+    startBtn.onclick = () => {
+        // выбор уровня сложности
+        let level = prompt("Выберите уровень сложности: легкий, средний, сложный").toLowerCase();
+        let qCount = 10;
+        if(level === "легкий") qCount = 5;
+        else if(level === "средний") qCount = 10;
+        else if(level === "сложный") qCount = allQuestions.length;
+        questions = [...allQuestions].sort(()=>Math.random()-0.5).slice(0,qCount);
+
+        if(!loadProgress()) answers = Array(questions.length).fill(null);
+
+        startBtn.style.display = "none";
+        testBox.style.display = "block";
+        testButtons.style.display = "flex";
+        finishScreen.style.display = "none";
+        startTimer();
+        showQuestion();
+    };
+
+    retryBtn.onclick = resetTest;
+})();
